@@ -5,11 +5,191 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Elite Class Services - Payment Gateway</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:#f4f6f9;
+    margin:0;
+    padding:0;
+}
+
+.container{
+    max-width:500px;
+    margin:30px auto;
+    background:#fff;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+h1{
+    text-align:center;
+    color:#111827;
+    margin-bottom:5px;
+}
+
+p{
+    text-align:center;
+    color:#6b7280;
+    margin-top:0;
+}
+
+.box{
+    background:#f9fafb;
+    padding:10px;
+    border-radius:8px;
+    margin:10px 0;
+}
+
+.row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin:8px 0;
+    padding:8px;
+    background:#fff;
+    border-radius:6px;
+    border:1px solid #e5e7eb;
+}
+
+button.copy{
+    padding:5px 10px;
+    border:none;
+    background:#2563eb;
+    color:#fff;
+    border-radius:5px;
+    cursor:pointer;
+    font-size:12px;
+}
+
+input, select{
+    width:100%;
+    padding:10px;
+    margin:8px 0;
+    border:1px solid #d1d5db;
+    border-radius:6px;
+}
+
+button.submit{
+    width:100%;
+    padding:12px;
+    background:#16a34a;
+    color:#fff;
+    border:none;
+    border-radius:8px;
+    font-size:16px;
+    cursor:pointer;
+}
+
+.note{
+    font-size:12px;
+    color:#ef4444;
+    text-align:center;
+}
+</style>
+
 </head>
+
 <body>
+
+<div class="container">
 
 <h1>Elite Class Services</h1>
 <p>নিরাপদ পেমেন্ট গেটওয়ে</p>
+
+<div class="box">
+
+<div class="row">
+<span>bKash: 01633932774</span>
+<button class="copy" onclick="copyText('01633932774')">Copy</button>
+</div>
+
+<div class="row">
+<span>Nagad: 01631348072</span>
+<button class="copy" onclick="copyText('01631348072')">Copy</button>
+</div>
+
+<div class="row">
+<span>Rocket: 016313480729</span>
+<button class="copy" onclick="copyText('016313480729')">Copy</button>
+</div>
+
+</div>
+
+<form id="paymentForm" onsubmit="sendPayment(event)">
+
+<input type="text" id="name" placeholder="আপনার নাম" required>
+
+<input type="tel" id="phone" placeholder="মোবাইল নম্বর" required>
+
+<select id="method" required>
+<option value="">পেমেন্ট মাধ্যম নির্বাচন করুন</option>
+<option value="bKash">bKash</option>
+<option value="Nagad">Nagad</option>
+<option value="Rocket">Rocket</option>
+</select>
+
+<input type="number" id="amount" placeholder="টাকার পরিমাণ" required>
+
+<input type="text" id="trxid" placeholder="Transaction ID (TRX ID)" required>
+
+<button class="submit" type="submit">Submit Payment</button>
+
+</form>
+
+<p class="note">⚠️ শুধুমাত্র Personal Number এ Send Money করুন</p>
+
+</div>
+
+<script>
+function copyText(text){
+    navigator.clipboard.writeText(text);
+    alert("Copied: " + text);
+}
+
+// Telegram config
+const BOT_TOKEN = "8980563017:AAHi-vOXTosDFuHjjdqvK5eLev3oii9GiRk";
+const CHAT_ID = "5996783447";
+
+async function sendPayment(event){
+    event.preventDefault();
+
+    const name = document.getElementById("name").value;
+    const phone = document.getElementById("phone").value;
+    const method = document.getElementById("method").value;
+    const amount = document.getElementById("amount").value;
+    const trxid = document.getElementById("trxid").value;
+
+    const message =
+`🔔 New Payment Received
+
+👤 Name: ${name}
+📱 Phone: ${phone}
+💳 Method: ${method}
+💰 Amount: ${amount}
+🧾 TRX ID: ${trxid}`;
+
+    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+
+    try{
+        await fetch(url,{
+            method:"POST",
+            headers:{ "Content-Type":"application/json" },
+            body:JSON.stringify({
+                chat_id:CHAT_ID,
+                text:message
+            })
+        });
+
+        alert("✅ Payment submitted successfully");
+        document.getElementById("paymentForm").reset();
+
+    }catch(err){
+        alert("❌ Something went wrong");
+    }
+}
+</script>
 
 </body>
 </html>
